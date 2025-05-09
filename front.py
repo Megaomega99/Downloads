@@ -17,12 +17,20 @@ from flet.matplotlib_chart import MatplotlibChart
 class PredictorApp:
     def __init__(self, page: ft.Page):
         self.page = page
-        self.page.title = "Predictor de Series Temporales"
-        self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.padding = 20
-        self.page.bgcolor = "#F5F5F7"  # Color de fondo moderno
-        self.page.window_width = 1000  # Ancho de ventana predeterminado
-        self.page.window_height = 800  # Alto de ventana predeterminado
+        self.page.title = "Predictor de Series Temporales - Edición Automotriz Premium"
+        self.page.theme_mode = ft.ThemeMode.DARK
+        self.page.padding = 0
+        self.page.bgcolor = ft.LinearGradient(
+            begin=ft.alignment.top_left,
+            end=ft.alignment.bottom_right,
+            colors=["#181A20", "#23272F", "#2C2F38"]
+        )
+        self.page.window_width = 1100
+        self.page.window_height = 850
+        self.page.fonts = {
+            "luxury": "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+        }
+        self.page.font_family = "luxury"
         
         # Variables de estado
         self.data = None
@@ -46,18 +54,30 @@ class PredictorApp:
         
         # Componentes de la UI
         self.setup_ui()
-        
+
     def setup_ui(self):
-        # Título principal con easter egg
+        # Encabezado premium con logo automotriz
         self.logo = ft.Container(
-            content=ft.Text(
-                "⚡ Predictor ML", 
-                size=40, 
-                weight=ft.FontWeight.BOLD, 
-                color="#1E88E5"
-            ),
+            content=ft.Row([
+                ft.Icon(ft.icons.DIRECTIONS_CAR_FILLED, size=48, color="#FFD700"),
+                ft.Text(
+                    "AutoPredictor ML", 
+                    size=44, 
+                    weight=ft.FontWeight.BOLD, 
+                    color="#FFD700",
+                    font_family="luxury"
+                )
+            ]),
             on_click=self.handle_logo_click,
-            margin=ft.margin.only(bottom=10),
+            margin=ft.margin.only(bottom=10, top=20),
+            padding=ft.padding.symmetric(horizontal=20),
+            border_radius=20,
+            bgcolor=ft.LinearGradient(
+                begin=ft.alignment.top_left,
+                end=ft.alignment.bottom_right,
+                colors=["#23272F", "#181A20"]
+            ),
+            shadow=ft.BoxShadow(blur_radius=16, color="#FFD70033", offset=ft.Offset(0,8))
         )
         
         # Configuración de la página principal
@@ -73,8 +93,9 @@ class PredictorApp:
         # Sección 1: Carga de datos
         self.file_path_text = ft.Text(
             "Ningún archivo seleccionado", 
-            color=ft.colors.GREY_600,
-            size=16
+            color="#B0B0B0",
+            size=18,
+            font_family="luxury"
         )
         
         self.select_file_button = ft.ElevatedButton(
@@ -82,50 +103,56 @@ class PredictorApp:
             icon=ft.icons.UPLOAD_FILE,
             on_click=self.pick_files,
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#1E88E5",
-                elevation=5,
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=15
-            )
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=8,
+                shape=ft.RoundedRectangleBorder(radius=16),
+                padding=20
+            ),
+            tooltip="Sube tus datos automotrices"
         )
         
         # Sección 2: Vista previa de datos
         self.data_preview_title = ft.Text(
             "Vista previa de datos", 
-            size=22, 
+            size=24, 
             weight=ft.FontWeight.BOLD,
-            color="#333333"
+            color="#FFD700",
+            font_family="luxury"
         )
         
         self.toggle_preview_button = ft.IconButton(
             icon=ft.icons.VISIBILITY_OFF,
             tooltip="Ocultar vista previa",
             on_click=self.toggle_data_preview,
-            icon_color="#1E88E5",
-            icon_size=24,
+            icon_color="#FFD700",
+            icon_size=28,
+            style=ft.ButtonStyle(bgcolor="#23272F", shape=ft.CircleBorder(), elevation=4)
         )
         
         self.data_preview = ft.DataTable(
-            columns=[ft.DataColumn(ft.Text("Sin datos"))],
+            columns=[ft.DataColumn(ft.Text("Sin datos", color="#FFD700"))],
             rows=[],
-            border=ft.border.all(1, ft.colors.GREY_400),
-            border_radius=8,
-            vertical_lines=ft.border.BorderSide(1, ft.colors.GREY_300),
-            horizontal_lines=ft.border.BorderSide(1, ft.colors.GREY_300),
-            bgcolor=ft.colors.WHITE
+            border=ft.border.all(2, "#FFD700"),
+            border_radius=12,
+            vertical_lines=ft.border.BorderSide(1, "#444444"),
+            horizontal_lines=ft.border.BorderSide(1, "#444444"),
+            bgcolor="#23272F"
         )
         
         self.data_preview_container = ft.Container(
             content=self.data_preview,
             padding=ft.padding.only(top=10),
-            visible=self.show_preview
+            visible=self.show_preview,
+            border_radius=12,
+            shadow=ft.BoxShadow(blur_radius=12, color="#FFD70022", offset=ft.Offset(0,4))
         )
         
         self.data_info = ft.Text(
             "Sin datos cargados", 
-            color=ft.colors.GREY_600,
-            size=16
+            color="#B0B0B0",
+            size=18,
+            font_family="luxury"
         )
         
         # Botón para retroceder/reiniciar
@@ -134,11 +161,11 @@ class PredictorApp:
             icon=ft.icons.REFRESH,
             on_click=self.handle_reset,
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#FF5252",
-                elevation=5,
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=15
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=8,
+                shape=ft.RoundedRectangleBorder(radius=16),
+                padding=20
             )
         )
         
@@ -149,11 +176,11 @@ class PredictorApp:
             on_click=self.handle_preprocess,
             disabled=True,
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#4CAF50",
-                elevation=5,
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=15
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=8,
+                shape=ft.RoundedRectangleBorder(radius=16),
+                padding=20
             )
         )
         
@@ -162,11 +189,13 @@ class PredictorApp:
             label="Columna objetivo",
             disabled=True,
             on_change=self.handle_target_change,
-            width=300,
-            border_radius=10,
+            width=320,
+            border_radius=14,
             filled=True,
-            bgcolor=ft.colors.WHITE,
-            border_color=ft.colors.GREY_400
+            bgcolor="#23272F",
+            border_color="#FFD700",
+            color="#FFD700",
+            label_style=ft.TextStyle(color="#FFD700", font_family="luxury")
         )
         
         # Sección 5: Entrenamiento del modelo
@@ -181,28 +210,30 @@ class PredictorApp:
             ],
             disabled=True,
             value="lasso",
-            width=300,
-            border_radius=10,
+            width=320,
+            border_radius=14,
             filled=True,
-            bgcolor=ft.colors.WHITE,
-            border_color=ft.colors.GREY_400
+            bgcolor="#23272F",
+            border_color="#FFD700",
+            color="#FFD700",
+            label_style=ft.TextStyle(color="#FFD700", font_family="luxury")
         )
         
-        # Modifica la definición del botón de entrenamiento para hacerlo más visible
         self.train_button = ft.ElevatedButton(
-            text="ENTRENAR MODELO",  # Texto en mayúsculas para mayor énfasis
+            text="ENTRENAR MODELO",
             icon=ft.icons.MODEL_TRAINING,
             on_click=self.handle_train,
             disabled=True,
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#FF5722",  # Color más llamativo (naranja intenso)
-                elevation=8,  # Mayor elevación para destacarlo
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=20,  # Padding más grande
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=12,
+                shape=ft.RoundedRectangleBorder(radius=18),
+                padding=28,
             ),
-            width=300,  # Ancho fijo para hacerlo más grande
-            height=60,  # Altura específica para hacerlo más visible
+            width=340,
+            height=70,
+            tooltip="Entrena tu modelo premium"
         )
         
         # Construir la vista principal con tarjetas (Cards) para un aspecto más moderno
@@ -210,24 +241,32 @@ class PredictorApp:
             controls=[
                 # Encabezado
                 ft.Container(
-                    content=ft.Row(
-                        [self.logo, ft.Text("Predictor de Series Temporales", size=30)]
-                    ),
-                    margin=ft.margin.only(bottom=20)
+                    content=ft.Row([
+                        self.logo,
+                        ft.Text("Predictor de Series Temporales para Autos de Lujo", size=32, color="#FFD700", font_family="luxury", weight=ft.FontWeight.BOLD)
+                    ]),
+                    margin=ft.margin.only(bottom=24)
                 ),
                 
                 # Tarjeta 1: Selección de archivo
                 ft.Card(
                     content=ft.Container(
                         content=ft.Column([
-                            ft.Text("Cargar datos", size=18, weight=ft.FontWeight.BOLD),
+                            ft.Text("Cargar datos automotrices", size=20, weight=ft.FontWeight.BOLD, color="#FFD700", font_family="luxury"),
                             ft.Row([self.select_file_button, self.file_path_text]),
                             ft.Row([self.reset_button], alignment=ft.MainAxisAlignment.END)
                         ]),
-                        padding=20
+                        padding=28,
+                        bgcolor=ft.LinearGradient(
+                            begin=ft.alignment.top_left,
+                            end=ft.alignment.bottom_right,
+                            colors=["#23272F", "#181A20"]
+                        ),
+                        border_radius=18
                     ),
-                    elevation=5,
-                    margin=ft.margin.only(bottom=20)
+                    elevation=10,
+                    margin=ft.margin.only(bottom=24),
+                    shadow_color="#FFD70033"
                 ),
                 
                 # Tarjeta 2: Vista previa de datos
@@ -240,19 +279,26 @@ class PredictorApp:
                                 self.toggle_preview_button
                             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                             self.data_info,
-                            self.data_preview_container  # Contenedor con control de visibilidad
+                            self.data_preview_container
                         ]),
-                        padding=20
+                        padding=28,
+                        bgcolor=ft.LinearGradient(
+                            begin=ft.alignment.top_left,
+                            end=ft.alignment.bottom_right,
+                            colors=["#23272F", "#181A20"]
+                        ),
+                        border_radius=18
                     ),
-                    elevation=5,
-                    margin=ft.margin.only(bottom=20)
+                    elevation=10,
+                    margin=ft.margin.only(bottom=24),
+                    shadow_color="#FFD70033"
                 ),
                 
                 # Tarjeta 3: Opciones de procesamiento
                 ft.Card(
                     content=ft.Container(
                         content=ft.Column([
-                            ft.Text("Configuración del modelo", size=18, weight=ft.FontWeight.BOLD),
+                            ft.Text("Configuración del modelo premium", size=20, weight=ft.FontWeight.BOLD, color="#FFD700", font_family="luxury"),
                             ft.Container(
                                 content=ft.Column([
                                     ft.Row(
@@ -263,11 +309,11 @@ class PredictorApp:
                                         [
                                             ft.Container(
                                                 content=self.target_column_dropdown,
-                                                margin=ft.margin.only(right=10)
+                                                margin=ft.margin.only(right=12)
                                             ),
                                             ft.Container(
                                                 content=self.model_type_dropdown,
-                                                margin=ft.margin.only(left=10)
+                                                margin=ft.margin.only(left=12)
                                             )
                                         ],
                                         alignment=ft.MainAxisAlignment.CENTER
@@ -277,124 +323,116 @@ class PredictorApp:
                                         alignment=ft.MainAxisAlignment.CENTER
                                     )
                                 ]),
-                                padding=ft.padding.only(top=20)
+                                padding=ft.padding.only(top=24)
                             )
                         ]),
-                        padding=20
+                        padding=28,
+                        bgcolor=ft.LinearGradient(
+                            begin=ft.alignment.top_left,
+                            end=ft.alignment.bottom_right,
+                            colors=["#23272F", "#181A20"]
+                        ),
+                        border_radius=18
                     ),
-                    elevation=5
+                    elevation=10,
+                    shadow_color="#FFD70033"
                 )
             ],
             scroll=ft.ScrollMode.AUTO
         )
     
     def setup_results_view(self):
-        # Título de resultados
         self.results_title = ft.Text(
-            "Resultados del Modelo", 
-            size=30, 
+            "Resultados del Modelo Premium", 
+            size=34, 
             weight=ft.FontWeight.BOLD,
-            color="#1E88E5"
+            color="#FFD700",
+            font_family="luxury"
         )
-        
-        # Métricas de rendimiento
         self.results_metrics = ft.Text(
             "Sin resultados disponibles", 
-            color=ft.colors.GREY_600,
-            size=16
+            color="#B0B0B0",
+            size=18,
+            font_family="luxury"
         )
-        
-        # Gráfico
         self.chart_container = ft.Container(
-            content=ft.Text("El gráfico se mostrará aquí después del entrenamiento"),
+            content=ft.Text("El gráfico se mostrará aquí después del entrenamiento", color="#FFD700"),
             alignment=ft.alignment.center,
-            height=400,
-            border=ft.border.all(1, ft.colors.GREY_300),
-            border_radius=8,
-            bgcolor=ft.colors.WHITE
+            height=350,  # Reducido de 420 a 300
+            border=ft.border.all(2, "#FFD700"),
+            border_radius=14,
+            bgcolor="#23272F",
+            shadow=ft.BoxShadow(blur_radius=12, color="#FFD70022", offset=ft.Offset(0,4))
         )
-        
-        # Detalles del modelo
-        self.model_details = ft.Text("", size=16)
-        
-        # Botones de navegación
+        self.model_details = ft.Text("", size=18, color="#FFD700", font_family="luxury")
         self.back_button = ft.ElevatedButton(
             text="Volver al inicio",
             icon=ft.icons.ARROW_BACK,
             on_click=lambda e: self.show_view("main"),
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#1E88E5",
-                elevation=5,
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=15
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=8,
+                shape=ft.RoundedRectangleBorder(radius=16),
+                padding=20
             )
         )
-        
-        # Construir la vista de resultados con tarjetas
         self.results_view = ft.Column(
             controls=[
-                # Encabezado
                 ft.Container(
                     content=ft.Row([self.logo, self.results_title]),
-                    margin=ft.margin.only(bottom=20)
+                    margin=ft.margin.only(bottom=24)
                 ),
-                # Fila con métricas y detalles del modelo
-                ft.Row(
-                    [
-                        # Tarjeta Métricas
-                        ft.Card(
-                            content=ft.Container(
-                                content=ft.Column([
-                                    ft.Text("Métricas del modelo", size=18, weight=ft.FontWeight.BOLD),
-                                    ft.Container(
-                                        content=self.results_metrics,
-                                        padding=15,
-                                        bgcolor="#F9F9F9",
-                                        border_radius=8
-                                    )
-                                ]),
-                                padding=20
-                            ),
-                            elevation=5,
-                            expand=True,
-                            margin=ft.margin.only(right=10)
+                ft.Row([
+                    ft.Card(
+                        content=ft.Container(
+                            content=ft.Column([
+                                ft.Text("Métricas del modelo", size=20, weight=ft.FontWeight.BOLD, color="#FFD700", font_family="luxury"),
+                                ft.Container(
+                                    content=self.results_metrics,
+                                    padding=18,
+                                    bgcolor="#23272F",
+                                    border_radius=10
+                                )
+                            ]),
+                            padding=24
                         ),
-                        # Tarjeta Detalles del modelo
-                        ft.Card(
-                            content=ft.Container(
-                                content=ft.Column([
-                                    ft.Text("Detalles del modelo", size=18, weight=ft.FontWeight.BOLD),
-                                    ft.Container(
-                                        content=self.model_details,
-                                        padding=15,
-                                        bgcolor="#F9F9F9",
-                                        border_radius=8
-                                    )
-                                ]),
-                                padding=20
-                            ),
-                            elevation=5,
-                            expand=True,
-                            margin=ft.margin.only(left=10)
-                        )
-                    ],
-                    spacing=20,
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
-                # Tarjeta Gráfico de predicciones
+                        elevation=10,
+                        expand=True,
+                        margin=ft.margin.only(right=12),
+                        shadow_color="#FFD70033"
+                    ),
+                    ft.Card(
+                        content=ft.Container(
+                            content=ft.Column([
+                                ft.Text("Detalles del modelo", size=20, weight=ft.FontWeight.BOLD, color="#FFD700", font_family="luxury"),
+                                ft.Container(
+                                    content=self.model_details,
+                                    padding=18,
+                                    bgcolor="#23272F",
+                                    border_radius=10
+                                )
+                            ]),
+                            padding=24
+                        ),
+                        elevation=10,
+                        expand=True,
+                        margin=ft.margin.only(left=12),
+                        shadow_color="#FFD70033"
+                    )
+                ], spacing=24, alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 ft.Card(
                     content=ft.Container(
                         content=ft.Column([
-                            ft.Text("Visualización de predicciones", size=18, weight=ft.FontWeight.BOLD),
+                            ft.Text("Visualización de predicciones", size=20, weight=ft.FontWeight.BOLD, color="#FFD700", font_family="luxury"),
                             self.chart_container
                         ]),
-                        padding=20
+                        padding=24
                     ),
-                    elevation=5,
-                    margin=ft.margin.only(bottom=20)
+                    elevation=10,
+                    margin=ft.margin.only(bottom=24),
+                    shadow_color="#FFD70033"
                 ),
-                # Navegación
                 ft.Row([self.back_button], alignment=ft.MainAxisAlignment.CENTER)
             ],
             scroll=ft.ScrollMode.AUTO
@@ -450,75 +488,74 @@ class PredictorApp:
 
     def setup_easter_egg_view(self):
         """Configura la vista para el easter egg"""
-        # Título del easter egg
         self.easter_egg_title = ft.Text(
             "¡MEGAOMEGA!", 
-            size=40, 
-            color="#FF5252", 
+            size=44, 
+            color="#FFD700", 
             weight=ft.FontWeight.BOLD,
-            text_align=ft.TextAlign.CENTER
+            text_align=ft.TextAlign.CENTER,
+            font_family="luxury"
         )
-        
-        # Mensaje del easter egg
         self.easter_egg_message = ft.Text(
-            "¡Has descubierto el easter egg!", 
-            size=24, 
-            text_align=ft.TextAlign.CENTER
+            "¡Has descubierto el easter egg premium!", 
+            size=28, 
+            text_align=ft.TextAlign.CENTER,
+            color="#FFD700",
+            font_family="luxury"
         )
-        
-        # Créditos
         self.easter_egg_credits = ft.Text(
-            "Desarrollado con 💙 por los mejores", 
-            size=20, 
-            text_align=ft.TextAlign.CENTER
+            "Desarrollado con 💙 para el mundo automotriz de lujo", 
+            size=22, 
+            text_align=ft.TextAlign.CENTER,
+            color="#FFD700",
+            font_family="luxury"
         )
-        
-        # GIF animado
         self.easter_egg_animation = ft.Image(
             src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGRlMHoydXB5bHl0dXFienhhbmw3OXR3Y2NzN2ZseW44dGJqaDR1ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GeimqsH0TLDt4tScGw/giphy.gif",
-            width=400,
-            height=300,
+            width=420,
+            height=320,
             fit=ft.ImageFit.CONTAIN
         )
-        
-        # Botón para volver
         self.easter_egg_back_button = ft.ElevatedButton(
             text="Volver al inicio",
             icon=ft.icons.ARROW_BACK,
             on_click=lambda e: self.show_view("main"),
             style=ft.ButtonStyle(
-                color=ft.colors.WHITE,
-                bgcolor="#1E88E5",
-                elevation=5,
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=15
+                color="#23272F",
+                bgcolor="#FFD700",
+                elevation=8,
+                shape=ft.RoundedRectangleBorder(radius=16),
+                padding=20
             )
         )
-        
-        # Construir la vista completa con una tarjeta
         self.easter_egg_view = ft.Column(
             controls=[
-                # Contenido principal
                 ft.Card(
                     content=ft.Container(
                         content=ft.Column([
                             self.easter_egg_title,
-                            ft.Divider(),
+                            ft.Divider(color="#FFD700"),
                             self.easter_egg_message,
                             self.easter_egg_credits,
                             ft.Container(
                                 content=self.easter_egg_animation,
                                 alignment=ft.alignment.center,
-                                padding=20
+                                padding=24
                             ),
                         ]),
-                        padding=40,
-                        alignment=ft.alignment.center
+                        padding=48,
+                        alignment=ft.alignment.center,
+                        bgcolor=ft.LinearGradient(
+                            begin=ft.alignment.top_left,
+                            end=ft.alignment.bottom_right,
+                            colors=["#23272F", "#181A20"]
+                        ),
+                        border_radius=24
                     ),
-                    elevation=10,
-                    margin=ft.margin.only(top=50, bottom=30),
+                    elevation=14,
+                    margin=ft.margin.only(top=60, bottom=36),
+                    shadow_color="#FFD70033"
                 ),
-                # Botón para volver
                 ft.Container(
                     content=self.easter_egg_back_button,
                     alignment=ft.alignment.center
@@ -696,25 +733,78 @@ Una R² más cercana a 1 indica un mejor ajuste del modelo.
                 self.page.update()
     
     def update_chart(self):
-        # Crear una figura con mejor estilo
-        plt.clf()  # Limpiar la figura anterior
-        plt.cla()  # Limpiar los ejes
-        plt.close()  # Cerrar la figura anterior
-        # Configurar el estilo de la gráfica
-        # Usar un estilo moderno de seaborn
-        plt.style.use('seaborn-v0_8')
-        fig, ax = plt.subplots(figsize=(10, 6))
-        # Añadir cuadrícula y trazar datos reales y predicciones
-        ax.grid(True, linestyle='--', alpha=0.6)
-        ax.plot(self.X_test, self.y_test, 'o', label='Valores reales', color='#1E88E5', alpha=0.8, markersize=5)
-        ax.plot(self.X_test, self.y_pred, 'o-', label='Predicciones', color='#FFA726', alpha=0.8, markersize=5)
-        # Añadir título y etiquetas con mejor formato
-        ax.set_title('Comparación de predicciones vs valores reales', fontsize=16, fontweight='bold')
-        ax.set_xlabel('Índice', fontsize=12)
-        ax.set_ylabel(f'Valor de {self.target_column}', fontsize=12)
-        # Mejorar la leyenda
-        ax.legend(loc='best', frameon=True, fontsize=10)
+        plt.clf()
+        plt.cla()
+        plt.close()
+        
+        # Usar un estilo sofisticado
+        plt.style.use('dark_background')
+        
+        # Crear figura con dimensiones elegantes
+        fig, ax = plt.subplots(figsize=(10, 5.5))
+        
+        # Colores premium
+        bg_color = '#1A1A2E'  # Azul oscuro elegante
+        grid_color = '#333366'  # Azul medio para la cuadrícula
+        accent_gold = '#B8860B'  # Dorado oscuro elegante (más sofisticado)
+        teal_color = '#20B2AA'  # Turquesa elegante
+        
+        # Configurar fondos
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
+        
+        # Cuadrícula sutil
+        ax.grid(True, linestyle='--', linewidth=0.5, color=grid_color, alpha=0.5)
+        
+        # Datos reales (puntos dorados sutiles)
+        ax.scatter(
+            self.X_test, self.y_test, 
+            label='Valores reales', 
+            color=accent_gold, 
+            edgecolor=bg_color,
+            s=50,
+            alpha=0.85,
+            zorder=3
+        )
+        
+        # Línea de predicción (línea turquesa elegante)
+        ax.plot(
+            self.X_test, self.y_pred, 
+            label='Predicción', 
+            color=teal_color, 
+            linewidth=2.5, 
+            marker=None,
+            alpha=0.9, 
+            zorder=2
+        )
+        
+        # Eliminar bordes de ejes para un look más limpio
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        
+        # Etiquetas elegantes
+        ax.set_title('Predicción Premium', fontsize=16, color='white', pad=10, fontweight='normal')
+        ax.set_xlabel('Índice', fontsize=12, color='white', labelpad=8)
+        ax.set_ylabel(f'{self.target_column}', fontsize=12, color='white', labelpad=8)
+        
+        # Ticks sutiles
+        ax.tick_params(axis='both', colors='#CCCCCC', labelsize=10)
+        
+        # Leyenda elegante en la esquina superior derecha
+        legend = ax.legend(
+            loc='upper right',
+            framealpha=0.7,
+            facecolor=bg_color,
+            edgecolor='#444444',
+            fontsize=10
+        )
+        
+        for text in legend.get_texts():
+            text.set_color('white')
+        
         plt.tight_layout()
+        
+        # Convertir a widget de Flet
         chart = MatplotlibChart(fig, expand=True)
         self.chart_container.content = chart
 
