@@ -434,14 +434,11 @@ class PredictorApp:
         else:
             self.easter_egg_clicks = 1
         self.last_click_time = current_time
-        # Ver debug opcional
-        print(f"Easter egg clicks: {self.easter_egg_clicks}")
         # Activar el easter egg al alcanzar 5 clics
         if self.easter_egg_clicks >= 5:
             self.easter_egg_clicks = 0
             self.show_easter_egg()
-            print("Easter egg activado!")
-    
+
     def show_easter_egg(self):
         """Muestra el easter egg 'MEGAOMEGA' en una vista separada"""
         if not hasattr(self, 'easter_egg_view'):
@@ -450,7 +447,6 @@ class PredictorApp:
         
         # Cambiar a la vista del easter egg
         self.show_view("easter_egg")
-        print("Easter egg activado!")
 
     def setup_easter_egg_view(self):
         """Configura la vista para el easter egg"""
